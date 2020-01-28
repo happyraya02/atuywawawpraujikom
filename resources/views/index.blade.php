@@ -380,67 +380,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-lg-3 col-md-6 col-sm-6 single-blog">
-                        <div class="thumb">
-                            <img class="img-fluid" src="{{asset('assets/frontend/img/b1.jpg')}}" alt="">
-                        </div>
-                        <p class="date">10 Jan 2018</p>
-                        <a href="blog-single"><h4>Cooking Perfect Fried Rice
-                        in minutes</h4></a>
-                        <p>
-                            inappropriate behavior ipsum dolor sit amet, consectetur.
-                        </p>
-                        <div class="meta-bottom d-flex justify-content-between">
-                            <p><span class="lnr lnr-heart"></span> 15 Likes</p>
-                            <p><span class="lnr lnr-bubble"></span> 02 Comments</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6 single-blog">
-                        <div class="thumb">
-                            <img class="img-fluid" src="{{asset('assets/frontend/img/b2.jpg')}}" alt="">
-                        </div>
-                        <p class="date">10 Jan 2018</p>
-                        <a href="blog-single"><h4>Secret of making Heart
-                        Shaped eggs</h4></a>
-                        <p>
-                            inappropriate behavior ipsum dolor sit amet, consectetur.
-                        </p>
-                        <div class="meta-bottom d-flex justify-content-between">
-                            <p><span class="lnr lnr-heart"></span> 15 Likes</p>
-                            <p><span class="lnr lnr-bubble"></span> 02 Comments</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6 single-blog">
-                        <div class="thumb">
-                            <img class="img-fluid" src="{{asset('assets/frontend/img/b3.jpg')}}" alt="">
-                        </div>
-                        <p class="date">10 Jan 2018</p>
-                        <a href="blog-single"><h4>How to check steak if
-                        it is tender or not</h4></a>
-                        <p>
-                            inappropriate behavior ipsum dolor sit amet, consectetur.
-                        </p>
-                        <div class="meta-bottom d-flex justify-content-between">
-                            <p><span class="lnr lnr-heart"></span> 15 Likes</p>
-                            <p><span class="lnr lnr-bubble"></span> 02 Comments</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6 single-blog">
-                        <div class="thumb">
-                            <img class="img-fluid" src="{{asset('assets/frontend/img/b4.jpg')}}" alt="">
-                        </div>
-                        <p class="date">10 Jan 2018</p>
-                        <a href="blog-single"><h4>Seaseme and black seed
-                        Flavored Bun Rocks</h4></a>
-                        <p>
-                            inappropriate behavior ipsum dolor sit amet, consectetur.
-                        </p>
-                        <div class="meta-bottom d-flex justify-content-between">
-                            <p><span class="lnr lnr-heart"></span> 15 Likes</p>
-                            <p><span class="lnr lnr-bubble"></span> 02 Comments</p>
-                        </div>
-                    </div>
+                <div class="row" id="latest">
+
                 </div>
             </div>
         </section>
@@ -537,5 +478,6 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
         <script src="{{asset('assets/frontend/js/isotope.pkgd.min.js')}}"></script>
         <script src="{{asset('assets/frontend/js/mail-script.js')}}"></script>
         <script src="{{asset('assets/frontend/js/main.js')}}"></script>
+        <script src="{{asset('js/frontend.js')}}"></script>
     </body>
 </html>

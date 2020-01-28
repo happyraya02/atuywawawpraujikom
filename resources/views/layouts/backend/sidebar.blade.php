@@ -32,9 +32,9 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ url('admin/tag') }}" class="nav-link">
+                    <a href="{{ url('admin/stokmasuk') }}" class="nav-link">
                     <i class="nav-icon fas fa-user"></i>
-                    <p>Tag</p>
+                    <p>Stok Masuk</p>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -43,24 +43,6 @@
                     <p>Kategori</p>
                     </a>
                 </li>
-                {{-- <li class="nav-item">
-                    <a href="{{ url('admin/produk') }}" class="nav-link">
-                    <i class="nav-icon fas fa-book"></i>
-                    <p>Produk</p>
-                    </a>
-                </li> --}}
-                {{-- <li class="nav-item">
-                    <a href="{{ url('admin/order') }}" class="nav-link">
-                    <i class="nav-icon fas fa-plane"></i>
-                    <p>Order</p>
-                    </a>
-                </li> --}}
-                {{-- <li class="nav-item">
-                    <a href="{{ url('admin/transaksi') }}" class="nav-link">
-                    <i class="nav-icon fas fa-money-bill"></i>
-                    <p>Transaksi</p>
-                    </a>
-                </li> --}}
             </ul>
           </li>
         </ul>

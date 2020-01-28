@@ -113,7 +113,7 @@
         ]
     });
     $('#tambahdata').click(function () {
-        $('#kategori_id').val('');
+        $('#id_kategori').val('');
         $('#form').trigger("reset");
         $('#modal').modal({backdrop: 'static', keyboard: false});
         $('#modal').modal('show');
@@ -124,7 +124,7 @@
             // console.log(data);
             $('#modal').modal({backdrop: 'static', keyboard: false});
             $('#modal').modal('show');
-            $('#kategori_id').val(data.id);
+            $('#id_kategori').val(data.id);
             $('#nama').val(data.nama);
         });
     });
@@ -134,7 +134,15 @@
             type: "DELETE",
             url: "{{ url('admin/kategori-destroy') }}"+"/"+idKategori,
             success: function(data){
+                $('#form').trigger("reset");
+                $('#modal').modal('hide');
                 table.draw();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Data Successfully Erased',
+                    showConfirmButton: false,
+                    timer: 1000
+                });
             },
             error: function(request, status, error) {
                 console.log(error);

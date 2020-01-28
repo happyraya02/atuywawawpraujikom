@@ -8,9 +8,9 @@ class kategori extends Model
 {
     protected $fillable = ['nama','slug'];
     public $timestamps = true;
-    public function galleri()
+    public function gallery()
     {
-        return $this->hasMany('App\galleri', 'id_kategori');
+        return $this->hasMany('App\gallery', 'id_kategori');
     }
     public function getRouteKeyName()
     {

@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\kategori;
-use App\tag;
+use DataTables;
 use App\gallery;
-use Session;
+use Illuminate\Support\Facades\File;
 use Auth;
-use File;
+use DB;
 class GalleryController extends Controller
 {
     /**
@@ -16,17 +15,28 @@ class GalleryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $gallery = gallery::with('kategori', 'tag', 'user')->get();
-            $response = [
-                'success' => true,
-                'data' =>  $gallery,
-                'message' => 'Berhasil!'
-            ];
-        // return response()->json($response, 200);
-        return view('admin.gallery.index', compact('gallery'));
+        if ($request->ajax()) {
+            $data = gallery::with('kategori')->latest()->get();
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Delete" class="btn btn-warning btn-sm edit"><i class="nav-icon fas fa-pen" style="color:white"></i></a>';
+                    $btn = $btn . ' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Delete" class="btn btn-danger btn-sm hapus"><i class="nav-icon fas fa-trash" style="width:15px"></i></a>';
+
+                    return $btn;
+                })
+                ->addColumn('gambar', function ($data) {
+                    $img = '<img src="../assets/poto/' . $data->foto . '" alt="" width="100%" height="15%">';
+                    return $img;
+                })
+                ->rawColumns(['action', 'gambar'])
+                ->make(true);
+        }
+        return view('admin.gallery');
     }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -34,10 +44,9 @@ class GalleryController extends Controller
      */
     public function create()
     {
-        $kategori = kategori::all();
-        $tag = tag::all();
-        return view('admin.gallery.create', compact('kategori', 'tag'));
+        //
     }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -46,37 +55,69 @@ class GalleryController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'judul' => 'required',
-            'konten' => 'required',
-            'foto' => 'required|mimes:jpeg,jpg,png,gif|required|max:2560',
-            'id_kategori' => 'required',
-            'tag' => 'required'
-        ]);
-        $gallery = new gallery();
-        $gallery->judul = $request->judul;
-        $gallery->slug = str::slug($request->judul, '-');
-        $gallery->konten = $request->konten;
-        $gallery->id_user = Auth::user()->id;
-        $gallery->id_kategori = $request->id_kategori;
-        //foto
-        if ($request->hasFile('foto')){
-            $file = $request->file('foto');
-            $path = public_path() . '/assets/img/gallery/';
-            $filename = str_random(6) . '_' . $file->getClientOriginalName();
-            $upload = $file->move($path, $filename);
-            $gallery->foto = $filename;
-        }
-        $gallery->save();
-        $gallery->tag()->attach($request->tag);
+        $slug = Str::slug($request->nama, '-');
 
-        $response = [
-                'success' => true,
-                'data' =>  $gallery,
-                'message' => 'Berhasil!'
-            ];
-            return redirect()->route('gallery.index');
+        if (is_null($request->gallery_id)) {
+            $photo = Str::random(6) . $request->file('foto')->getClientOriginalName();
+            $request->foto->move(public_path('assets/poto'), $photo);
+            gallery::updateOrCreate(
+                ['id' => $request->gallery_id],
+                [
+                    'nama' => $request->nama,
+                    'slug' => $slug,
+                    'id_kategori' => $request->id_kategori,
+                    'harga' => $request->harga,
+                    'stok' => $request->stok,
+                    'konten' => $request->konten,
+                    'foto' => $photo,
+
+                ]
+            );
+        } else {
+            if (is_null($request->foto)) {
+                gallery::updateOrCreate(
+                    ['id' => $request->gallery_id],
+                    [
+                        'nama' => $request->nama,
+                        'slug' => $slug,
+                        'id_kategori' => $request->id_kategori,
+                        'harga' => $request->harga,
+                        'stok' => $request->stok,
+                        'konten' => $request->konten
+
+                    ]
+                );
+            } else {
+                $old_photo = \DB::select('SELECT foto FROM galleries WHERE id = ' . $request->gallery_id . '');
+                $data = '';
+                foreach ($old_photo as $value) {
+                    $data .= $value->foto;
+                }
+                $image_path = "assets/poto/" . $data;
+                if (File::exists($image_path)) {
+                    File::delete($image_path);
+                }
+                $photo = Str::random(6) . $request->file('foto')->getClientOriginalName();
+                $request->foto->move(public_path('assets/poto'), $photo);
+                gallery::updateOrCreate(
+                    ['id' => $request->gallery_id],
+                    [
+                        'nama' => $request->nama,
+                        'slug' => $slug,
+                        'id_kategori' => $request->id_kategori,
+                        'harga' => $request->harga,
+                        'stok' => $request->stok,
+                        'konten' => $request->konten,
+                        'foto' => $photo,
+
+                    ]
+                );
+            }
+        }
+
+        return response()->json(['success' => ' Berhasil di Simpan']);
     }
+
     /**
      * Display the specified resource.
      *
@@ -87,6 +128,7 @@ class GalleryController extends Controller
     {
         //
     }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -95,8 +137,17 @@ class GalleryController extends Controller
      */
     public function edit($id)
     {
-        //
+        $gallery = gallery::find($id);
+        $kategori = \DB::select('SELECT id,nama FROM kategoris');
+        foreach ($kategori as $value) {
+            $data[] = '<option value="' . $value->id . '" ' . ($value->id == $gallery->id_kategori ? 'selected' : '') . '>' . $value->nama . '</option>';
+        }
+
+        $option = implode('', $data);
+        $data = ['gallery' => $gallery, 'kategori' => $option];
+        return response()->json($data);
     }
+
     /**
      * Update the specified resource in storage.
      *
@@ -106,46 +157,9 @@ class GalleryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'judul' => 'required',
-            'konten' => 'required|min:50',
-            'id_kategori' => 'required',
-            'tag' => 'required'
-        ]);
-        $gallery = gallery::findOrFail($id);
-        $gallery->judul = $request->judul;
-        $gallery->slug = str::slug($request->judul, '-');
-        $gallery->konten = $request->konten;
-        $gallery->id_user = Auth::user()->id;
-        $gallery->id_kategori = $request->id_kategori;
-        //foto
-        if ($request->hasFile('foto')){
-            $file = $request->file('foto');
-            $path = public_path() . '/assets/img/gallery/';
-            $filename = str_random(6) . '_' . $file->getClientOriginalName();
-            $uploadSuccsess = $file->move($path, $filename);
-            //hapus foto lama
-            if ($gallery->foto){
-                $old_foto = $gallery->foto;
-                $filepath = public_path() . '/assets/img/gallery/' . $gallery->foto;
-                try {
-                    File::delete($filepath);
-                }
-                catch (FileNotFoundException $e){
-                    //File sudah dihapus atau tidak ada
-                }
-            }
-            $gallery->foto = $filename;
-        }
-        $gallery->save();
-        $gallery->tag()->sync($request->tag);
-        $response = [
-            'success' => true,
-            'data' => $gallery,
-            'message' => 'Berhasil Dirubah!'
-        ];
-        return redirect()->route('gallery.index');
+        //
     }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -154,35 +168,12 @@ class GalleryController extends Controller
      */
     public function destroy($id)
     {
-        $gallery = gallery::findOrFail($id);
-        $blog = gallery::findOrFail($id);
-        if ($gallery->foto){
-            $old_foto = $gallery->foto;
-            $filepath = public_path() . '/assets/img/gallery' . $gallery->foto;
-            try {
-                File::delete($filepath);
-            }
-            catch (FileNotFoundException $e){
-                //File sudah dihapus/tidak ada
-            }
+        $gallery = gallery::find($id);
+        $image_path = "assets/poto/" . $gallery->foto;
+        if (File::exists($image_path)) {
+            File::delete($image_path);
         }
-        $gallery->tag()->detach($gallery->id);
         $gallery->delete();
-        $response = [
-            'success' => true,
-            'data' => $gallery,
-            'message' => 'Berhasil Dihapus!'
-        ];
-        return redirect()->route('gallery.index');
+        return response()->json(['success' => 'Berhasil Dihapus']);
     }
-    // public function latest()
-    // {
-    //     $gallery = gallery::take(3)->get();
-    //     $response = [
-    //         'success' => true,
-    //         'data' => $gallery,
-    //         'message' => "Berhasil"
-    //     ];
-    //     return response()->json($response, 200);
-    // }
 }

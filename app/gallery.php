@@ -7,22 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 class gallery extends Model
 {
     protected $fillable = [
-        'judul', 'slug', 'foto',
-        'konten', 'id_user', 'id_kategori'
+        'nama', 'slug', 'foto',
+        'konten','harga','stok', 'id_kategori'
     ];
     public $timestamps = true;
+
+
     public function kategori()
     {
         return $this->belongsTo('App\kategori', 'id_kategori');
     }
-    public function user()
+
+    public function stokmasuk()
     {
-        return $this->belongsTo('App\User', 'id_user');
+        return $this->hasMany('App\StokMasuk', 'id_produk');
     }
-    public function tag()
-    {
-        return $this->belongsToMany('App\tag','galleri_tag','id_galleri','id_tag');
-    }
+
+
     public function getRouteKeyName()
     {
         return 'slug';

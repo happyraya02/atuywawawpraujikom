@@ -15,16 +15,18 @@ class CreateGalleriesTable extends Migration
     {
         Schema::create('galleries', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('judul');
+            $table->string('nama');
             $table->string('slug');
             $table->text('konten');
+            $table->double('harga');
             $table->string('foto');
+            $table->float('stok')->nullable();
             $table->unsignedbigInteger('id_kategori');
             $table->foreign('id_kategori')->references('id')
             ->on('kategoris')->onDelete('cascade');
-            $table->unsignedbigInteger('id_user');
-            $table->foreign('id_user')->references('id')
-             ->on('users')->onDelete('cascade');
+            // $table->unsignedbigInteger('id_user');
+            // $table->foreign('id_user')->references('id')
+            //  ->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

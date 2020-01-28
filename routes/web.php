@@ -59,10 +59,10 @@ Route::group(['prefix' => '/admin', 'middleware' => ['auth']], function () {
     Route::get('/kategori/{id}/edit', 'KategoriController@edit');
     Route::delete('/kategori-destroy/{id}', 'KategoriController@destroy');
 
-    Route::get('/tag', 'TagController@index');
-    Route::post('/tag-store', 'TagController@store');
-    Route::get('/tag/{id}/edit', 'TagController@edit');
-    Route::delete('/tag-destroy/{id}', 'TagController@destroy');
+    Route::get('/stokmasuk', 'StokmasukController@index');
+    Route::post('/stokmasuk-store', 'StokmasukController@store');
+    Route::get('/stokmasuk/{id}/edit', 'StokmasukController@edit');
+    Route::delete('/stokmasuk-destroy/{id}', 'StokmasukController@destroy');
 
     Route::get('/gallery', 'GalleryController@index');
     Route::post('/gallery-store', 'GalleryController@store');
