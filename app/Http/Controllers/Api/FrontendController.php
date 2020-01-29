@@ -8,7 +8,7 @@ use App\gallery;
 class FrontendController extends Controller
 {
     public function latest(){
-        $latest = gallery::take(4)->get();
+        $latest = gallery::take(16)->get();
 
         $response = [
             'success' => true,
