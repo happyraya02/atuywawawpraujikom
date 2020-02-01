@@ -56,7 +56,7 @@
         <div class="modal-content">
             <!-- Bagian header modal-->
             <div class="modal-header">
-                <h4 class="modal-title">Tambah Data</h4>
+                <h4 class="modal-title"></h4>
                 <button type="button" class="close" data-dismiss="modal">
                     <img src="{{ asset('assets/backend/open-iconic/svg/x.svg') }}">
                 </button>
@@ -66,7 +66,7 @@
             <div class="modal-body">
                 <!-- Form-->
                 <form id="form" name="form" class="form-horizontal">
-                    <input type="hidden" name="id_kategori" id="id_kategori">
+                    <input type="hidden" name="kategori_id" id="kategori_id">
                     <div class="form-group">
                         <div class="col-lg-12">
                             <label for="name" class="control-label">Nama Kategori</label>
@@ -113,7 +113,8 @@
         ]
     });
     $('#tambahdata').click(function () {
-        $('#id_kategori').val('');
+        $('.modal-title').html('Tambah Data');
+        $('#kategori_id').val('');
         $('#form').trigger("reset");
         $('#modal').modal({backdrop: 'static', keyboard: false});
         $('#modal').modal('show');
@@ -124,7 +125,8 @@
             // console.log(data);
             $('#modal').modal({backdrop: 'static', keyboard: false});
             $('#modal').modal('show');
-            $('#id_kategori').val(data.id);
+            $('.modal-title').html('Edit Data');
+            $('#kategori_id').val(data.id);
             $('#nama').val(data.nama);
         });
     });
@@ -134,15 +136,7 @@
             type: "DELETE",
             url: "{{ url('admin/kategori-destroy') }}"+"/"+idKategori,
             success: function(data){
-                $('#form').trigger("reset");
-                $('#modal').modal('hide');
                 table.draw();
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Data Successfully Erased',
-                    showConfirmButton: false,
-                    timer: 1000
-                });
             },
             error: function(request, status, error) {
                 console.log(error);

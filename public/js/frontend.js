@@ -8,43 +8,87 @@
         datatype: "json",
         success: function(berhasil) {
             $.each(berhasil.data, function(key, value) {
-                $(".latest").append(
+                $("#latest").append(
                     `
-                    <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item">
-					<!-- Block2 -->
-					<div class="block2">
-						<div class="block2-pic hov-img0">
-							<img src="assets/poto/${value.foto}" alt="IMG-PRODUCT">
-
-							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View
-							</a>
-						</div>
-
-						<div class="block2-txt flex-w flex-t p-t-14">
-							<div class="block2-txt-child1 flex-col-l ">
-								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                ${value.nama}
-								</a>
-
-								<span class="stext-105 cl3">
-                                $${value.harga}
-								</span>
-							</div>
-
-							<div class="block2-txt-child2 flex-r p-t-3">
-								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-									<img class="icon-heart1 dis-block trans-04" src="{{asset('assets/frontend/images/icons/icon-heart-01.png')}}" alt="ICON">
-									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="{{asset('assets/frontend/images/icons/icon-heart-02.png')}}" alt="ICON">
-								</a>
-							</div>
-						</div>
-					</div>
+                    <div class="single-products-catagory clearfix">
+                    <a href="/produk/${value.slug}">
+                        <img src="assets/poto/${value.foto}" alt="">
+                        <!-- Hover Content -->
+                        <div class="hover-content">
+                            <div class="line"></div>
+                            <p>${value.harga}</p>
+                            <h4>${value.nama}</h4>
+                        </div>
+                    </a>
                 </div>
+                `
+                );
+            });
+        }
+    });
 
+    $.ajax({
+        url: url,
+        method: "GET",
+        datatype: "json",
+        success: function(berhasil) {
+            $.each(berhasil.data.kategori, function(key, value) {
+                $("#kategori").append(
+                    `
+                    <li><a href="/shop/${value.slug}"> ${value.nama} </a></li>
+                `
+                );
+            });
+        }
+    });
+
+    $.ajax({
+        url: url,
+        method: "GET",
+        datatype: "json",
+        success: function(berhasil) {
+            $.each(berhasil.data.gallery, function(key, value) {
+                $("#produk").append(
+                    `
+                    <div class="col-12 col-sm-6 col-md-12 col-xl-6">
+                    <div class="single-product-wrapper">
+                        <!-- Product Image -->
+                        <div class="product-img">
+                            <img src="/assets/poto/${value.foto}" alt="">
+                            <!-- Hover Thumb -->
+                            <img class="hover-img" src="/assets/poto/${value.foto}" alt="">
+                        </div>
+
+                        <!-- Product Description -->
+                        <div class="product-description d-flex align-items-center justify-content-between">
+                            <!-- Product Meta Data -->
+                            <div class="product-meta-data">
+                                <div class="line"></div>
+                                <p class="product-price">Rp. ${value.harga}</p>
+                                <a href="/produk/${value.slug}">
+                                    <h6>${value.nama}</h6>
+                                </a>
+                            </div>
+                            <!-- Ratings & Cart -->
+                            <div class="ratings-cart text-right">
+                                <div class="ratings">
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                </div>
+                                <div class="cart">
+                                    <a href="cart.html" data-toggle="tooltip" data-placement="left" title="Add to Cart"><img src="/assets/frontend/img/core-img/cart.png" alt=""></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 `
                 );
             });
         }
     });
 })(jQuery);
+

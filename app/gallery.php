@@ -20,7 +20,7 @@ class gallery extends Model
 
     public function stokmasuk()
     {
-        return $this->hasMany('App\StokMasuk', 'id_produk');
+        return $this->hasMany('App\StokMasuk','galleri_id');
     }
 
 

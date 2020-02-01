@@ -57,11 +57,11 @@ class GalleryController extends Controller
     {
         $slug = Str::slug($request->nama, '-');
 
-        if (is_null($request->gallery_id)) {
+        if (is_null($request->galleri_id)) {
             $photo = Str::random(6) . $request->file('foto')->getClientOriginalName();
             $request->foto->move(public_path('assets/poto'), $photo);
             gallery::updateOrCreate(
-                ['id' => $request->gallery_id],
+                ['id' => $request->galleri_id],
                 [
                     'nama' => $request->nama,
                     'slug' => $slug,
@@ -76,7 +76,7 @@ class GalleryController extends Controller
         } else {
             if (is_null($request->foto)) {
                 gallery::updateOrCreate(
-                    ['id' => $request->gallery_id],
+                    ['id' => $request->galleri_id],
                     [
                         'nama' => $request->nama,
                         'slug' => $slug,
@@ -88,7 +88,7 @@ class GalleryController extends Controller
                     ]
                 );
             } else {
-                $old_photo = \DB::select('SELECT foto FROM galleries WHERE id = ' . $request->gallery_id . '');
+                $old_photo = \DB::select('SELECT foto FROM galleries WHERE id = ' . $request->galleri_id . '');
                 $data = '';
                 foreach ($old_photo as $value) {
                     $data .= $value->foto;
@@ -100,7 +100,7 @@ class GalleryController extends Controller
                 $photo = Str::random(6) . $request->file('foto')->getClientOriginalName();
                 $request->foto->move(public_path('assets/poto'), $photo);
                 gallery::updateOrCreate(
-                    ['id' => $request->gallery_id],
+                    ['id' => $request->galleri_id],
                     [
                         'nama' => $request->nama,
                         'slug' => $slug,

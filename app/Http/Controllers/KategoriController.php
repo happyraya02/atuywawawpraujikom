@@ -8,7 +8,7 @@ use App\kategori;
 use DataTables;
 use Auth;
 
-class KategoriController extends Controller
+class kategoriController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,13 +18,16 @@ class KategoriController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Kategori::latest()->get();
+            $data = kategori::latest()->get();
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Delete" class="btn btn-warning btn-sm edit"><i class="nav-icon fas fa-pen" style="color:white"></i></a>';
-                    $btn = $btn . ' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Delete" class="btn btn-danger btn-sm hapus"><i class="nav-icon fas fa-trash" style="width:15px"></i></a>';
-
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-title="Delete" class="btn btn-warning btn-sm edit"><i class="nav-icon fas fa-pen" style="color:white"></i></a>';
+                    if($row->gallery->count() == 0){
+                    $btn = $btn . '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-title="Delete" class="btn btn-danger btn-sm hapus"><i class="nav-icon fas fa-trash" style="width:15px"></i></a> ';
+                    } else {
+                        $btn = $btn. ' <span class="badge badge-danger">Used</span>';
+                    }
                     return $btn;
                 })
                 ->rawColumns(['action'])
@@ -52,8 +55,8 @@ class KategoriController extends Controller
     public function store(Request $request)
     {
         $slug = Str::slug($request->nama, '-');
-        Kategori::updateOrCreate(
-            ['id' => $request->kategori_id],
+        kategori::updateOrCreate(
+            ['id' => $request->id_kategori],
             [
                 'nama' => $request->nama,
                 'slug' => $slug
@@ -82,7 +85,7 @@ class KategoriController extends Controller
      */
     public function edit($id)
     {
-        $kategori = Kategori::find($id);
+        $kategori = kategori::find($id);
         return response()->json($kategori);
     }
 
@@ -106,7 +109,7 @@ class KategoriController extends Controller
      */
     public function destroy($id)
     {
-        Kategori::find($id)->delete();
+        kategori::find($id)->delete();
         return response()->json(['success' => 'Berhasil Dihapus']);
     }
 }

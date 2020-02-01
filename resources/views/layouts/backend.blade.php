@@ -35,7 +35,12 @@
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
   <!-- sweetalert -->
   <link rel="stylesheet" href="{{ asset('assets/backend/sweetalert2/package/dist/sweetalert2.min.css') }}">
-  @yield('css')
+    <style>
+    body{
+        padding-right: 0 !important;
+    }
+    </style>
+    @yield('css')
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
@@ -49,14 +54,6 @@
 
   <!-- Content Wrapper. Contains page content -->
     @yield('content')
-  <!-- /.content-wrapper -->
-    {{-- @include('layouts.backend.footer') --}}
-
-  <!-- Control Sidebar -->
-  {{-- <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-  </aside> --}}
-  <!-- /.control-sidebar -->
 </div>
 <!-- ./wrapper -->
 

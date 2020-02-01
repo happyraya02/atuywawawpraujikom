@@ -18,3 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::get('/','Api\FrontendController@latest');
+Route::get('/shop','Api\FrontendController@shop');
+Route::get('/shop/{kategori}','Api\FrontendController@kategorishop');
+Route::get('/produk/{gallery}','Api\FrontendController@produkdetail');
+Route::get('/cart','Ecommerce\CartController@listCart');

@@ -12,42 +12,29 @@
 */
 
 Route::get('/', function () {
-    return view('index');
+    return view('frontend.index');
+});
+Route::get('/shop', function () {
+    return view('frontend.shop');
+});
+Route::get('/cart', function () {
+    return view('frontend.cart');
+});
+Route::get('/checkout', function () {
+    return view('frontend.checkout');
+});
+Route::get('/produk/{gallery}', function () {
+    return view('frontend.product');
+});
+Route::get('/shop/{kategori}', function () {
+    return view('frontend.shop');
 });
 
-Route::get('/about', function () {
-    return view('about');
-});
-Route::get('/bloghome', function () {
-    return view('blog-home');
-});
-Route::get('/blogsingle', function () {
-    return view('blog-single');
-});
-Route::get('/kontak', function () {
-    return view('contact');
-});
 
-Route::get('/elemen', function () {
-    return view('elements');
-});
+Route::resource('/formcart', 'Ecommerce\CartController');
 
-Route::get('/galeri', function () {
-    return view('gallery');
-});
+Route::get('/cart', 'Ecommerce\CartController@listCart');
 
-Route::get('/menu', function () {
-    return view('menu');
-});
-
-// Route::get('/kontak', function () {
-//     return view('contact');
-// });
-
-Route::get('/index', function () {
-    return view('layouts.index');
-});
-Auth::routes();
 
 // Route::get('/home', 'HomeController@index')->name('home');
 
@@ -69,3 +56,6 @@ Route::group(['prefix' => '/admin', 'middleware' => ['auth']], function () {
     Route::get('/gallery/{id}/edit', 'GalleryController@edit');
     Route::delete('/gallery-destroy/{id}', 'GalleryController@destroy');
 });
+
+
+Auth::routes();
