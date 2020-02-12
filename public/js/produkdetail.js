@@ -19,7 +19,6 @@ $.ajax({
                     </nav>
                 </div>
             </div>
-
              <div class="row">
                 <div class="col-12 col-lg-7">
                     <div class="single_product_thumb">
@@ -76,22 +75,21 @@ $.ajax({
                                     <i class="fa fa-star" aria-hidden="true"></i>
                                     <i class="fa fa-star" aria-hidden="true"></i>
                                 </div>
+                                <div class="review">
+                                    <a href="#">Write A Review</a>
+                                </div>
                             </div>
                             <!-- Avaiable -->
                             <p class="avaibility"><i class="fa fa-circle"></i> In Stock</p>
                         </div>
-
                         <div class="short_overview my-5">
                             <p>${get.data.konten}</p>
                         </div>
-
                         <!-- Add to Cart Form -->
-                        <div id="formcart">
-
+                        <div id='formcart'>
                         </div>
-
+                    </div>
                 </div>
-            </div>
              `
         );
     }
@@ -101,10 +99,10 @@ $.ajax({
     url: url,
     dataType: "json",
     method: "GET",
-    success: function(get){
+    success: function(get) {
         $(".quantity").append(
             `
-            <input type="hidden" name="galleri_id" value="${get.data.id}" class="from-control">
+                <input type="hidden" name="id_produk" value="${get.data.id}" class="form-control">
             `
         );
     }

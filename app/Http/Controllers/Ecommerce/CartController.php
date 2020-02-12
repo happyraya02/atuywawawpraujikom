@@ -9,56 +9,79 @@ use Cookie;
 
 class CartController extends Controller
 {
-    private function getCarts()
+     private function getCarts()
     {
-        $carts = json_decode( request()->cookie('dw-carts'), true);
+        $carts = json_decode(request()->cookie('dw-carts'), true);
         $carts = $carts != '' ? $carts : [];
         return $carts;
     }
-    public function store(Request $request)
+    public function addToCart(Request $request)
     {
-    //VALIDASI DATA YANG DIKIRIM
-    $this->validate($request, [
-        'galleri_id' => 'required|exists:galleries,id', //PASTIKAN galleri_idNYA ADA DI DB
-        'qty' => 'required|integer' //PASTIKAN QTY YANG DIKIRIM INTEGER
-    ]);
+        //VALIDASI DATA YANG DIKIRIM
+        $this->validate($request, [
+            'galleri_id' => 'required|exists:galleries,id', //PASTIKAN PRODUCT_IDNYA ADA DI DB
+            'qty' => 'required|integer' //PASTIKAN QTY YANG DIKIRIM INTEGER
+        ]);
 
-    //AMBIL DATA CART DARI COOKIE, KARENA BENTUKNYA JSON MAKA KITA GUNAKAN JSON_DECODE UNTUK MENGUBAHNYA MENJADI ARRAY
-    $carts = $this->getCarts();
+        //AMBIL DATA CART DARI COOKIE, KARENA BENTUKNYA JSON MAKA KITA GUNAKAN JSON_DECODE UNTUK MENGUBAHNYA MENJADI ARRAY
+        $carts = $this->getCarts();
 
-    //CEK JIKA CARTS TIDAK NULL DAN galleri_id ADA DIDALAM ARRAY CARTS
-    if ($carts && array_key_exists($request->galleri_id, $carts)) {
-        //MAKA UPDATE QTY-NYA BERDASARKAN galleri_id YANG DIJADIKAN KEY ARRAY
-        $carts[$request->galleri_id]['qty'] += $request->qty;
-    } else {
-        //SELAIN ITU, BUAT QUERY UNTUK MENGAMBIL PRODUK BERDASARKAN galleri_id
-        $galleri = gallery::find($request->galleri_id);
-        //TAMBAHKAN DATA BARU DENGAN MENJADIKAN galleri_id SEBAGAI KEY DARI ARRAY CARTS
-        $carts[$request->galleri_id] = [
-            'qty' => $request->qty,
-            'galleri_id' => $galleri->id,
-            'nama' => $galleri->nama,
-            'harga' => $galleri->harga,
-            'foto' => $galleri->foto
-        ];
+        //CEK JIKA CARTS TIDAK NULL DAN PRODUCT_ID ADA DIDALAM ARRAY CARTS
+        if ($carts && array_key_exists($request->galleri_id, $carts)) {
+            //MAKA UPDATE QTY-NYA BERDASARKAN PRODUCT_ID YANG DIJADIKAN KEY ARRAY
+            $carts[$request->galleri_id]['qty'] += $request->qty;
+        } else {
+            //SELAIN ITU, BUAT QUERY UNTUK MENGAMBIL PRODUK BERDASARKAN PRODUCT_ID
+            $produk = gallery::find($request->galleri_id);
+            //TAMBAHKAN DATA BARU DENGAN MENJADIKAN produk_ID SEBAGAI KEY DARI ARRAY CARTS
+            $carts[$request->galleri_id] = [
+                'qty' => $request->qty,
+                'galleri_id' => $produk->id,
+                'nama_produk' => $produk->nama,
+                'harga_produk' => $produk->harga,
+                'foto_produk' => $produk->foto
+            ];
+        }
+
+        //BUAT COOKIE-NYA DENGAN NAME DW-CARTS
+        //JANGAN LUPA UNTUK DI-ENCODE KEMBALI, DAN LIMITNYA 2800 MENIT ATAU 48 JAM
+
+        $cookie = cookie('dw-carts', json_encode($carts), 1);
+        return redirect()->back()->cookie($cookie);
     }
-
-    //BUAT COOKIE-NYA DENGAN NAME DW-CARTS
-    //JANGAN LUPA UNTUK DI-ENCODE KEMBALI, DAN LIMITNYA 2800 MENIT ATAU 48 JAM
-    $cookie = cookie('dw-carts', json_encode($carts), 2880);
-    return redirect()->back()->cookie($cookie);
-    }
-
 
     public function listCart()
     {
-    //MENGAMBIL DATA DARI COOKIE
-    $carts = $this->getCarts();
-    //UBAH ARRAY MENJADI COLLECTION, KEMUDIAN GUNAKAN METHOD SUM UNTUK MENGHITUNG SUBTOTAL
-    $subtotal = collect($carts)->sum(function($q) {
-        return $q['qty'] * $q['harga_gallery']; //SUBTOTAL TERDIRI DARI QTY * PRICE
-    });
-    //LOAD VIEW CART.BLADE.PHP DAN PASSING DATA CARTS DAN SUBTOTAL
-    return view('frontend.cart', compact('carts', 'subtotal'));
+        //MENGAMBIL DATA DARI COOKIE
+        $carts = $this->getCarts();
+
+        //UBAH ARRAY MENJADI COLLECTION, KEMUDIAN GUNAKAN METHOD SUM UNTUK MENGHITUNG SUBTOTAL
+        $subtotal = collect($carts)->sum(function ($q) {
+            return $q['qty'] * $q['harga_produk']; //SUBTOTAL TERDIRI DARI QTY * PRICE
+        });
+        //LOAD VIEW CART.BLADE.PHP DAN PASSING DATA CARTS DAN SUBTOTAL
+        return view('frontend.cart', compact('carts', 'subtotal'));
+    }
+
+    public function updateCart(Request $request)
+    {
+        //AMBIL DATA DARI COOKIE
+        $carts = $this->getCarts();
+        //KEMUDIAN LOOPING DATA PRODUCT_ID, KARENA NAMENYA ARRAY PADA VIEW SEBELUMNYA
+        //MAKA DATA YANG DITERIMA ADALAH ARRAY SEHINGGA BISA DI-LOOPING
+        foreach ($request->galleri_id as $key => $row) {
+            //DI CHECK, JIKA QTY DENGAN KEY YANG SAMA DENGAN PRODUCT_ID = 0
+            if ($request->qty[$key] == 0) {
+                //MAKA DATA TERSEBUT DIHAPUS DARI ARRAY
+                unset($carts[$row]);
+            } else {
+                //SELAIN ITU MAKA AKAN DIPERBAHARUI
+                $carts[$row]['qty'] = $request->qty[$key];
+            }
+        }
+        //SET KEMBALI COOKIE-NYA SEPERTI SEBELUMNYA
+        $cookie = cookie('dw-carts', json_encode($carts), 1);
+        //DAN STORE KE BROWSER.
+        return redirect()->back()->cookie($cookie);
     }
 }

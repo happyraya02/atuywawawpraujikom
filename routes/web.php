@@ -31,7 +31,9 @@ Route::get('/shop/{kategori}', function () {
 });
 
 
-Route::resource('/formcart', 'Ecommerce\CartController');
+
+Route::post('/formcart', 'Ecommerce\CartController@addToCart');
+Route::post('/formcart-update', 'Ecommerce\CartController@updateCart');
 
 Route::get('/cart', 'Ecommerce\CartController@listCart');
 
