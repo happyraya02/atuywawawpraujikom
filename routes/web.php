@@ -17,9 +17,6 @@ Route::get('/', function () {
 Route::get('/shop', function () {
     return view('frontend.shop');
 });
-Route::get('/cart', function () {
-    return view('frontend.cart');
-});
 Route::get('/checkout', function () {
     return view('frontend.checkout');
 });
@@ -32,10 +29,12 @@ Route::get('/shop/{kategori}', function () {
 
 
 
+Route::get('/cart', 'Ecommerce\CartController@cart');
+Route::get('/getsubtotal', 'Ecommerce\CartController@subtotal');
+Route::get('/totalproduk', 'Ecommerce\CartController@totalproduk');
+
 Route::post('/formcart', 'Ecommerce\CartController@addToCart');
 Route::post('/formcart-update', 'Ecommerce\CartController@updateCart');
-
-Route::get('/cart', 'Ecommerce\CartController@listCart');
 
 
 // Route::get('/home', 'HomeController@index')->name('home');

@@ -15,6 +15,14 @@ class CartController extends Controller
         $carts = $carts != '' ? $carts : [];
         return $carts;
     }
+
+    public function cart()
+    {
+        $carts = $this->getCarts();
+
+        return view('frontend.cart', compact('carts'));
+    }
+
     public function addToCart(Request $request)
     {
         //VALIDASI DATA YANG DIKIRIM
@@ -46,11 +54,12 @@ class CartController extends Controller
         //BUAT COOKIE-NYA DENGAN NAME DW-CARTS
         //JANGAN LUPA UNTUK DI-ENCODE KEMBALI, DAN LIMITNYA 2800 MENIT ATAU 48 JAM
 
-        $cookie = cookie('dw-carts', json_encode($carts), 1);
-        return redirect()->back()->cookie($cookie);
+        $cookie = cookie('dw-carts', json_encode($carts), 36000);
+        Cookie::queue($cookie);
+        return response()->json('Berhasil');
     }
 
-    public function listCart()
+    public function subtotal()
     {
         //MENGAMBIL DATA DARI COOKIE
         $carts = $this->getCarts();
@@ -59,14 +68,19 @@ class CartController extends Controller
         $subtotal = collect($carts)->sum(function ($q) {
             return $q['qty'] * $q['harga_produk']; //SUBTOTAL TERDIRI DARI QTY * PRICE
         });
+
         //LOAD VIEW CART.BLADE.PHP DAN PASSING DATA CARTS DAN SUBTOTAL
-        return view('frontend.cart', compact('carts', 'subtotal'));
+        return response()->json($subtotal);
     }
 
     public function updateCart(Request $request)
     {
         //AMBIL DATA DARI COOKIE
         $carts = $this->getCarts();
+
+        if (is_null($request->galleri_id)) {
+            return response()->json('Error : Your Product Not Found, Please Refresh Again or Try Again to AddToCart Your Product', 500);
+        }
         //KEMUDIAN LOOPING DATA PRODUCT_ID, KARENA NAMENYA ARRAY PADA VIEW SEBELUMNYA
         //MAKA DATA YANG DITERIMA ADALAH ARRAY SEHINGGA BISA DI-LOOPING
         foreach ($request->galleri_id as $key => $row) {
@@ -80,8 +94,16 @@ class CartController extends Controller
             }
         }
         //SET KEMBALI COOKIE-NYA SEPERTI SEBELUMNYA
-        $cookie = cookie('dw-carts', json_encode($carts), 1);
+        $cookie = cookie('dw-carts', json_encode($carts), 36000);
         //DAN STORE KE BROWSER.
-        return redirect()->back()->cookie($cookie);
+        Cookie::queue($cookie);
+        return response()->json('Berhasil');
+    }
+
+    public function totalproduk()
+    {
+        $carts = $this->getCarts();
+        $total = count($carts);
+        return response()->json($total);
     }
 }
